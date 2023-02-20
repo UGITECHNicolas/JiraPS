@@ -10,13 +10,17 @@ function ConvertTo-JiraCreateMetaField {
         foreach ($i in $InputObject) {
             Write-Debug "[$($MyInvocation.MyCommand.Name)] Converting `$InputObject to custom object"
 
-            $fields = $i.projects.issuetypes.fields
-            $fieldNames = (Get-Member -InputObject $fields -MemberType '*Property').Name
+            #$fields = $i.projects.issuetypes.fields
+            $fields = $i.values
+            #$fieldNames = (Get-Member -InputObject $fields -MemberType '*Property').Name
+            $fieldNames = $fields.Name
             foreach ($f in $fieldNames) {
-                $item = $fields.$f
+                #$item = $fields.$f
+                $item = $fields | where { $_.Name -eq $f}
 
                 $props = @{
-                    'Id'              = $f
+                    #'Id'              = $f
+                    'Id'              = $item.fieldId
                     'Name'            = $item.name
                     'HasDefaultValue' = [System.Convert]::ToBoolean($item.hasDefaultValue)
                     'Required'        = [System.Convert]::ToBoolean($item.required)
